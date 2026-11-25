@@ -2,6 +2,10 @@
 
 [![ci](https://github.com/shani8615/go-httpkit/actions/workflows/ci.yml/badge.svg)](https://github.com/shani8615/go-httpkit/actions/workflows/ci.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/shani8615/go-httpkit.svg)](https://pkg.go.dev/github.com/shani8615/go-httpkit)
+[![Go Report Card](https://goreportcard.com/badge/github.com/shani8615/go-httpkit)](https://goreportcard.com/report/github.com/shani8615/go-httpkit)
+[![Release](https://img.shields.io/github/v/release/shani8615/go-httpkit?sort=semver)](https://github.com/shani8615/go-httpkit/releases)
+[![Go version](https://img.shields.io/github/go-mod/go-version/shani8615/go-httpkit)](go.mod)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 Batteries for plain `net/http` services. No framework, no dependencies outside the standard library, and it works with `http.ServeMux` (Go 1.22+ routing), chi, or anything else that speaks `http.Handler`.
 
@@ -67,6 +71,18 @@ func main() {
 - **The logger never logs query strings, headers or bodies.** Those often carry tokens or personal data. A test enforces this.
 - **Idempotency keys should be scoped.** Set `Options.Scope` to the authenticated user or tenant so one client can't replay another client's response. For more than one instance, implement `idempotency.Store` on Redis or Postgres.
 - **`respond.Error` takes a client-safe message.** Log the internal error yourself and don't pass it to the client.
+
+## Why go-httpkit?
+
+Routers like [chi](https://github.com/go-chi/chi) ship great middleware, and since Go 1.22 the standard `http.ServeMux` handles method and path routing well. go-httpkit fills the gaps for plain `net/http` services without bringing in a framework:
+
+- **`Idempotency-Key` support**, so POST retries don't create duplicates, with per-user scoping and a pluggable store.
+- **RFC 9457 problem details** for consistent JSON errors.
+- **Strict JSON decoding** that rejects unknown fields, trailing data and oversized bodies.
+- **Keyset pagination** with opaque cursors.
+- **Logging that never records query strings, headers or bodies**, enforced by a test.
+
+All of it is standard `func(http.Handler) http.Handler`, so it works with chi, ServeMux, or anything else.
 
 ## License
 
